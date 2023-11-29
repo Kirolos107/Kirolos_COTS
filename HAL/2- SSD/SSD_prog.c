@@ -1,0 +1,150 @@
+#include "STD_TYPES.h"
+#include "BIT_MATH.h"
+#include "ErrType.h".h"
+
+#include "DIO_interface.h"
+#include "SSD_interface.h"
+
+
+uint8 SSD_u8ON(const SSD_Config_t* Copy_pConfiguration)
+{
+	uint8 Local_u8ErrorState = OK;
+	if(Copy_pConfiguration != NULL)
+	{
+		if((Copy_pConfiguration -> SSD_u8TYPE == ANODE) || (Copy_pConfiguration -> SSD_u8TYPE == ETAKIT))
+		{
+			DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8ENABLE_PORT, Copy_pConfiguration -> SSD_u8ENABLE_PIN, DIO_u8PIN_HIGH);
+		}
+		else if((Copy_pConfiguration -> SSD_u8TYPE == CATHODE))
+		{
+			DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8ENABLE_PORT, Copy_pConfiguration -> SSD_u8ENABLE_PIN, DIO_u8PIN_LOW);
+		}
+		else
+		{
+			Local_u8ErrorState = NOK;
+		}
+	}
+	else
+	{
+		Local_u8ErrorState = NULL_PTR_ERR;
+	}
+
+	return Local_u8ErrorState;
+}
+/********************************************************************************************/
+/********************************************************************************************/
+uint8 SSD_u8OFF(const SSD_Config_t* Copy_pConfiguration)
+{
+	uint8 Local_u8ErrorState = OK;
+	if(Copy_pConfiguration != NULL)
+	{
+		if((Copy_pConfiguration -> SSD_u8TYPE == ANODE) || ((Copy_pConfiguration -> SSD_u8TYPE == ETAKIT)))
+		{
+			DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8ENABLE_PORT, Copy_pConfiguration -> SSD_u8ENABLE_PIN, DIO_u8PIN_LOW);
+		}
+		else if((Copy_pConfiguration -> SSD_u8TYPE == CATHODE))
+		{
+			DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8ENABLE_PORT, Copy_pConfiguration -> SSD_u8ENABLE_PIN, DIO_u8PIN_HIGH);
+		}
+		else
+		{
+			Local_u8ErrorState = NOK;
+		}
+	}
+	else
+	{
+		Local_u8ErrorState = NULL_PTR_ERR;
+	}
+
+	return Local_u8ErrorState;
+}
+/********************************************************************************************/
+/********************************************************************************************/
+uint8 SSD_u8SetNumber(const SSD_Config_t* Copy_pConfiguration, uint8 Copy_u8Number)
+{
+
+	uint8 Local_u8ErrorState = OK;
+	if(Copy_pConfiguration != NULL)
+	{
+		uint8 SSD_au8LocalNumbers[10] =
+			   {
+				0b00111111, // 0
+				0b00110000, // 1
+				0b01011011, // 2
+				0b01001111, // 3
+				0b01100110, // 4
+				0b01101101, // 5
+				0b01111101, // 6
+				0b00000111, // 7
+				0b01111111, // 8
+				0b01101111  // 9
+				};
+
+		if(Copy_pConfiguration -> SSD_u8TYPE == ANODE)
+		{
+			uint8 Local_u8DisplayNumber = ~(SSD_au8LocalNumbers[Copy_u8Number]);
+			if(Copy_pConfiguration -> SSD_u8LEDA_PIN == DIO_u8PIN0)
+			{
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN0, GET_BIT(Local_u8DisplayNumber, 0u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN1, GET_BIT(Local_u8DisplayNumber, 1u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN2, GET_BIT(Local_u8DisplayNumber, 2u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN3, GET_BIT(Local_u8DisplayNumber, 3u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN4, GET_BIT(Local_u8DisplayNumber, 4u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN5, GET_BIT(Local_u8DisplayNumber, 5u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN6, GET_BIT(Local_u8DisplayNumber, 6u));
+			}
+			else if(Copy_pConfiguration -> SSD_u8LEDA_PIN == DIO_u8PIN1)
+			{
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN1, GET_BIT(Local_u8DisplayNumber, 0u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN2, GET_BIT(Local_u8DisplayNumber, 1u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN3, GET_BIT(Local_u8DisplayNumber, 2u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN4, GET_BIT(Local_u8DisplayNumber, 3u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN5, GET_BIT(Local_u8DisplayNumber, 4u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN6, GET_BIT(Local_u8DisplayNumber, 5u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN7, GET_BIT(Local_u8DisplayNumber, 6u));
+			}
+			else
+			{
+				Local_u8ErrorState = NOK;
+			}
+		}
+		else if((Copy_pConfiguration -> SSD_u8TYPE == CATHODE) || (Copy_pConfiguration -> SSD_u8TYPE == ETAKIT))
+		{
+			uint8 Local_u8DisplayNumber = SSD_au8LocalNumbers[Copy_u8Number];
+			if(Copy_pConfiguration -> SSD_u8LEDA_PIN == DIO_u8PIN0)
+			{
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN0, GET_BIT(Local_u8DisplayNumber, 0u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN1, GET_BIT(Local_u8DisplayNumber, 1u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN2, GET_BIT(Local_u8DisplayNumber, 2u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN3, GET_BIT(Local_u8DisplayNumber, 3u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN4, GET_BIT(Local_u8DisplayNumber, 4u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN5, GET_BIT(Local_u8DisplayNumber, 5u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN6, GET_BIT(Local_u8DisplayNumber, 6u));
+			}
+			else if(Copy_pConfiguration -> SSD_u8LEDA_PIN == DIO_u8PIN1)
+			{
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN1, GET_BIT(Local_u8DisplayNumber, 0u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN2, GET_BIT(Local_u8DisplayNumber, 1u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN3, GET_BIT(Local_u8DisplayNumber, 2u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN4, GET_BIT(Local_u8DisplayNumber, 3u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN5, GET_BIT(Local_u8DisplayNumber, 4u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN6, GET_BIT(Local_u8DisplayNumber, 5u));
+				DIO_u8SetPinValue(Copy_pConfiguration -> SSD_u8PORT, DIO_u8PIN7, GET_BIT(Local_u8DisplayNumber, 6u));
+			}
+			else
+			{
+				Local_u8ErrorState = NOK;
+			}
+		}
+		else
+		{
+			Local_u8ErrorState = NOK;
+		}
+	}
+	else
+	{
+		Local_u8ErrorState = NULL_PTR_ERR;
+	}
+
+	return Local_u8ErrorState;
+}

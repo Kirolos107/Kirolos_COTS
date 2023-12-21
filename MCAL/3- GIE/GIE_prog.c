@@ -8,7 +8,7 @@
 /********************************************************************************************/
 void GIE_voidEnableGlobal(void)
 {
-	__asm volatile("SLI");  /* Inline assembly: Set I-Bit */
+	__asm volatile("SEI");  /* Inline assembly: Set I-Bit */
 
 	// SET_BIT(SREG, SREG_I);
 }
